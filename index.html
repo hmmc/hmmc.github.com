@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="css/theme.css" media="screen" type="text/css" />
+<title>Welcome to HMM sample classification</title>
+
+</head>
+<body>
+<h1>Welcome to HMM sample classification</h1>
+
+<hr />
+
+<h2>Abstruct</h2>
+
+<p>Multiple myeloma is a cancer of plasma cells that normally produces antibodies. Aneuploidy, the alterations in the number of whole or partial chromosomes, is consistently observed in many cancer types including multiple myeloma. According to the status of chromosomes in multiple myeloma, this cancer can be subdivided into two main subtypes: hyperdiploid multiple myeloma (HMM) and non-hyperdiploid multiple myeloma (NHMM). The two subtypes have different survival prognosis, possibly due to their different but converging paths to myeloma. The existing method to identify the two subtypes is fluorescence in situ hybridization (FISH), and there is no effective method using gene expression profiles to classify the two subtypes. We have built a nearest-neighbor based classification method to separate multiple myeloma into HMM and NHMM with gene expression profiles, providing a useful tool for further studying of multiple myeloma. We also provide publicly the R packages and the processed training data sets at <a href="http://hmmc.github.com">there</a>.</p>
+
+<p><code>Classifying hyperdiploidy status of multiple myeloma samples using gene expression profiles</code></p>
+
+<h2>Download</h2>
+
+<p>Packages: window <a href="data/SampleClassify_1.0.zip">SampleClassify_1.0.zip</a> Mac <a href="data/SampleClassify_1.0.tar.gz">SampleClassify_1.0.tar.gz</a></p>
+
+<p>Training data: <a href="data/TrainData.tar.bz2">TrainData.tar.bz2</a></p>
+
+<p>Test data(not whole): <a href="data/GSE6401_RAW.tar.bz2">GSE6401_RAW.tar.bz2</a></p>
+
+<p>Source code: <a href="data/mmsc.r">mmsc.r</a></p>
+
+<h2>Usage</h2>
+
+<h3><em>install</em></h3>
+
+<p>Package affy</p>
+
+<pre><code>&gt; source("http://bioconductor.org/biocLite.R")
+&gt; biocLite("affy")
+</code></pre>
+
+<p>Package AnnotationDbi</p>
+
+<pre><code>&gt; source("http://bioconductor.org/biocLite.R")
+&gt; biocLite("AnnotationDbi")
+</code></pre>
+
+<p>Data CDF file <a href="http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp">http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp</a></p>
+
+<pre><code>run R GUI --&gt; package/data --&gt; package installer --&gt; local source package.  
+</code></pre>
+
+<p><code>Notes:Don't use command install.packages(), It's not work!</code></p>
+
+<p>Install SampleClassify</p>
+
+<pre><code>run R GUI --&gt; package/data --&gt; package installer --&gt; local source package.
+</code></pre>
+
+<h3>input</h3>
+
+<p><em>Raw_Dir</em> | <em>Exp_File</em> : Raw_Dir for raw data directory and Exp_File for expression data file name. The format of raw data is compressed .cel from GEO database by affy matrix technology. You can input raw data directly, then the program will first calculate the expression by R package <em>affy</em>. Otherwise, you must provide common style expression data. You is not smart with provide both Raw_Dir and Exp_File.</p>
+
+<p>training data : This baic data.</p>
+
+<p>cdf name : ref package affy.</p>
+
+<p>[out put] : A directory contain all of result and temp file. By default, It's "./OutPut"</p>
+
+<p>[k] : .. By default, it's 16.</p>
+
+<p>[run time] : .. By default, it's 1:140.</p>
+
+<p><code>Note:[ parameter ] parameter is optional.</code></p>
+
+<h3>output</h3>
+
+<p>ExprData_MM_sort.txt :</p>
+
+<p>Expression_Temp.XLS :</p>
+
+<p>MeanDistPlot :</p>
+
+<p>MMSCresult_k16.txt :</p>
+
+<h3>example</h3>
+
+<pre><code>#set workshop
+setwd("~/Documents/YingxiangL/");
+
+#overview the file and directory
+dir();
+
+#load package
+library(SampleClassify);
+
+#analysie data
+mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Dir="TrainData/", CDF_Name="HGU133a_hs_refseq");
+</code></pre>
+
+<h3>screenshot</h3>
+
+<p><img src="image/example.png" alt="image" /></p>
+
+<h2>About</h2>
+
+<p>This a instest work. Mou, github, R, biology, statistic and so on…</p>
+</body>
+</html>
