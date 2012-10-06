@@ -29,9 +29,9 @@ Package AnnotationDbi
 	> source("http://bioconductor.org/biocLite.R")
 	> biocLite("AnnotationDbi")
 	
-Data CDF file [download](http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp)
+Data CDF file [link](http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp)
 
-Exmaple for download "HG-U133_Plus2" array:First, verify you OS and R version. Here my work on Mac OS and R2.15. Second, click the link above, find column names R.15,BioCxxx and raw names REFSEQ, click "click me". Last, look for ran names "HG-U133_Plus2" and column names "source"(win32 for windows), click "C".
+Exmaple for download "HG-U133_Plus2" array: First, verify you OS and R version. Here my work on Mac OS and R2.15. Second, click the link above, find column names R.15,BioCxxx and raw names REFSEQ, click "click me". Last, look for ran names "HG-U133_Plus2" and column names "source"(win32 for windows), click "C".
 
 	run R GUI --> package/data --> package installer --> local source package.
 
@@ -42,7 +42,7 @@ Install ClassifyMM
 	run R GUI --> package/data --> package installer --> local source package.
 
 	
-### Input for main function mmsc()
+### *Input for main function mmsc()*
 
 *Raw_Dir* | *Exp_File* : Raw_Dir for raw data directory and Exp_File for expression data file name. The format of raw data is compressed .cel from GEO database by affy matrix technology. You can input raw data directly, then the program will first calculate the expression by R package _affy_. Otherwise, you must provide common style expression data. You can't provide both Raw_Dir and Exp_File.
 
@@ -58,7 +58,7 @@ Install ClassifyMM
 
 `Note:[ parameter ] parameter is optional.`
 
-### Output
+### *Output*
 
 ExprData_MM_sort.txt :
 
@@ -68,7 +68,7 @@ MeanDistPlot :
 
 MMSCresult_k16.txt :
 
-### example
+### *Example*
 
 
 	#set workshop
@@ -83,7 +83,7 @@ MMSCresult_k16.txt :
 	#analysie data
 	mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Dir="TrainData/", CDF_Name="HGU133a_hs_refseq");
 
-### screenshot
+### *Screenshot*
 
 ![image](image/cdf1.png)
 ![image](image/cdf2.png)

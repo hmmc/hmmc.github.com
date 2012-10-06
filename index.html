@@ -44,9 +44,9 @@
 &gt; biocLite("AnnotationDbi")
 </code></pre>
 
-<p>Data CDF file <a href="http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp">download</a></p>
+<p>Data CDF file <a href="http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp">link</a></p>
 
-<p>Exmaple for download "HG-U133_Plus2" array:First, verify you OS and R version. Here my work on Mac OS and R2.15. Second, click the link above, find column names R.15,BioCxxx and raw names REFSEQ, click "click me". Last, look for ran names "HG-U133_Plus2" and column names "source"(win32 for windows), click "C".</p>
+<p>Exmaple for download "HG-U133_Plus2" array: First, verify you OS and R version. Here my work on Mac OS and R2.15. Second, click the link above, find column names R.15,BioCxxx and raw names REFSEQ, click "click me". Last, look for ran names "HG-U133_Plus2" and column names "source"(win32 for windows), click "C".</p>
 
 <pre><code>run R GUI --&gt; package/data --&gt; package installer --&gt; local source package.
 </code></pre>
@@ -58,7 +58,7 @@
 <pre><code>run R GUI --&gt; package/data --&gt; package installer --&gt; local source package.
 </code></pre>
 
-<h3>Input for main function mmsc()</h3>
+<h3><em>Input for main function mmsc()</em></h3>
 
 <p><em>Raw_Dir</em> | <em>Exp_File</em> : Raw_Dir for raw data directory and Exp_File for expression data file name. The format of raw data is compressed .cel from GEO database by affy matrix technology. You can input raw data directly, then the program will first calculate the expression by R package <em>affy</em>. Otherwise, you must provide common style expression data. You can't provide both Raw_Dir and Exp_File.</p>
 
@@ -74,7 +74,7 @@
 
 <p><code>Note:[ parameter ] parameter is optional.</code></p>
 
-<h3>Output</h3>
+<h3><em>Output</em></h3>
 
 <p>ExprData_MM_sort.txt :</p>
 
@@ -84,7 +84,7 @@
 
 <p>MMSCresult_k16.txt :</p>
 
-<h3>example</h3>
+<h3><em>Example</em></h3>
 
 <pre><code>#set workshop
 setwd("~/Documents/YingxiangL/");
@@ -99,7 +99,7 @@ library(ClassifyMM);
 mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Dir="TrainData/", CDF_Name="HGU133a_hs_refseq");
 </code></pre>
 
-<h3>screenshot</h3>
+<h3><em>Screenshot</em></h3>
 
 <p><img src="image/cdf1.png" alt="image" />
 <img src="image/cdf2.png" alt="image" />
