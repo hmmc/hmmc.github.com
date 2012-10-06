@@ -1,9 +1,9 @@
 mmsc <- function(
 				Raw_Dir  = "",
+				Exp_File = "",
+				CDF_Name,
 				Out_Dir  = "./OutPut",
 				Tra_Dir  = "./TrainData",
-				Exp_File = "",
-				CDF_Name = "",
 				K_Const  = 16,
 				Run_Time = 1:140)
 {
