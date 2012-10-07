@@ -1,58 +1,35 @@
-mmsc <- function(
+mmsc <-
+function(
 				Raw_Dir  = "",
 				Exp_File = "",
 				CDF_Name,
+				Tra_Data,
 				Out_Dir  = "./OutPut",
-				Tra_Dir  = "./TrainData",
 				K_Const  = 16,
 				Run_Time = 1:140)
 {
-	######################################
 	# switch
-	######################################
 		switch_path <- function(string)
 		{
 			if(substr(string,nchar(string),nchar(string))!=.Platform$file.sep)
 				string=paste(string,"",sep=.Platform$file.sep)
-			string
+			return(string)
 		}
-	######################################
-	# Raw data --> expression data.
-	######################################
+	# raw(cel) --> expression(tab)
 		rp <- function(rawdir,cdf,expfile){
-			print(expfile)
-			library(affy)
-			#Use pacakge 'affy' to get the expression data.
-			oldwd <- getwd()
-			setwd(rawdir)
-			RawData <- ReadAffy()
-			setwd(oldwd)
+			RawData         <- ReadAffy(celfile.path=rawdir)
 			RawData@cdfName <- cdf
-			#According to the platform to set the CDF file.
-			RMAData <- rma(RawData)
-			ExprData_MM <- exprs(RMAData)
-			#Output the worked data.
+			RMAData         <- rma(RawData)
+			ExprData_MM     <- exprs(RMAData)
 			write.table(ExprData_MM, file=expfile)
 		}
-	######################################
-	# Classify for expression data.
-	######################################
-		cf <- function(expfile,outdir,k,AllSampleid,TrainData){
-			library(class)
-			TrainData=paste(TrainData,c('GSE6477ExprDataMMscale.txt','GSE6477DifExprGeneList.txt','Tri_NontrisomyChroGene.txt'),sep='')
-			print("Multiple myeloma subtype classification Classification.r")
-			print("Let's start classifying.")
-			ExprData_MM <- read.table(expfile)
-			##Read in the scaled expression data of multiple myeloma of GSE6477.
-			GSE6477ExprDataMMscale <- read.table(TrainData[1])
-			##Read in the differentially expressed gene name list.
-			GSE6477DifExprGeneList <- read.table(TrainData[2],as.is = T)
-			##Read in the gene names in trisomy chromosome or nontrisomy chromosome.
-			Tri_NontrisomyChroGene <- read.table(TrainData[3],as.is = T)
-			TrisomyChro_Gene <- Tri_NontrisomyChroGene[which(Tri_NontrisomyChroGene[, 1] ==  'TrisomyChroGene'), 2]
-			NontrisomyChro_Gene <- Tri_NontrisomyChroGene[which(Tri_NontrisomyChroGene[, 1] ==  'NontrisomyChroGene'), 2]
-			##Scale the data to make it normalized.
-			ExprData_MM_scale <- scale(ExprData_MM)
+	# Classify for expression
+		cf <- function(expfile,outdir,k,AllSampleid,td){
+			print("multiple myeloma subtype classify")
+			ExprData_MM         <- read.table(expfile)
+			TrisomyChro_Gene    <- td$tri[which(td$tri[, 1] ==  'TrisomyChroGene'), 2]
+			NontrisomyChro_Gene <- td$tri[which(td$tri[, 1] ==  'NontrisomyChroGene'), 2]
+			ExprData_MM_scale   <- scale(ExprData_MM)
 			##Get the tri-chro mean and adjusted nontri-chro mean of dataset.
 			TriNontriChro_Mean <- function(Data_MM_scale, FeatureGene){
 				TriChro_Gene <- intersect(FeatureGene, TrisomyChro_Gene)
@@ -98,8 +75,8 @@ mmsc <- function(
 			##Classify each sample for 140 times.
 			KNN_k_Classification <- c()
 			for (i in AllSampleid){
-				FeatureGene <- unlist(strsplit(GSE6477DifExprGeneList[[1]][i], ','))
-				GSE6477_Adjusted_TriNontriChro_Mean_Data <- Adjusted_TriNontriChro_Mean(GSE6477ExprDataMMscale, FeatureGene)
+				FeatureGene <- unlist(strsplit(as.vector(td$dif[[1]][i]), ','))
+				GSE6477_Adjusted_TriNontriChro_Mean_Data <- Adjusted_TriNontriChro_Mean(td$exp, FeatureGene)
 				Adjusted_TriNontriChro_Mean_Data <- Adjusted_TriNontriChro_Mean(ExprData_MM_scale, FeatureGene)
 				TrainingData <- GSE6477_Adjusted_TriNontriChro_Mean_Data[-i, ]
 				TestData <- Adjusted_TriNontriChro_Mean_Data
@@ -118,13 +95,13 @@ mmsc <- function(
 			write.table(KNN_k_Summary, file = output, sep = '\t', quote = F)
 			###################################
 			###################################
-			print('Adjusted Trisomy&Nontrisomy Chro Mean Distribution (MeanDistrPlot.r)')
+			print('adjusted trisomy&nontrisomy chro mean distribution')
 			exp_sort <- paste(outdir,'ExprData_MM_sort.txt',sep='')
 			Adjusted_TriNontriChroMean_Plot_Fold <- paste(outdir,'MeanDistrPlot/',sep='')
 			dir.create(Adjusted_TriNontriChroMean_Plot_Fold)
 			##Sort the data in the order: NHMM, HMM and output with limit '\t'.
 			HMM_Name <- KNN_k_Summary[KNN_k_Summary[, 2] == 'HMM', 1]
-			NHMM_Name <- KNN_k_Summary[KNN_k_Summary[, 2] == 'NHMM', 1] 
+			NHMM_Name <- KNN_k_Summary[KNN_k_Summary[, 2] == 'NHMM', 1]
 			ExprData_MM_sort <- cbind(ExprData_MM[, match(NHMM_Name, colnames(ExprData_MM))], ExprData_MM[, match(HMM_Name, colnames(ExprData_MM))])
 			write.table(ExprData_MM_sort, file = exp_sort, sep = '\t', quote = F)
 			##Function of ploting ‘Adjusted Trisomy&Nontrisomy Chro Mean Distribution’
@@ -133,8 +110,8 @@ mmsc <- function(
 				GSE6477_NontriChro_Mean <- as.numeric(GSE6477_TriNontriChro_Mean_Input[c(GSE6477_HMMid, GSE6477_NHMMid), 2])
 				TriChro_Mean <- as.numeric(TriNontriChro_Mean_Input[c(HMMid, NHMMid), 1])
 				NontriChro_Mean <- as.numeric(TriNontriChro_Mean_Input[c(HMMid, NHMMid), 2])
-				plot(c(GSE6477_TriChro_Mean, TriChro_Mean), c(GSE6477_NontriChro_Mean, NontriChro_Mean), 
-					col = c(rep(rgb(1, 0.5, 1), length(GSE6477_HMMid)), rep(rgb(0.5, 0, 1), length(GSE6477_NHMMid)), rep('red', length(HMMid)), rep('blue', length(NHMMid))), 
+				plot(c(GSE6477_TriChro_Mean, TriChro_Mean), c(GSE6477_NontriChro_Mean, NontriChro_Mean),
+					col = c(rep(rgb(1, 0.5, 1), length(GSE6477_HMMid)), rep(rgb(0.5, 0, 1), length(GSE6477_NHMMid)), rep('red', length(HMMid)), rep('blue', length(NHMMid))),
 					pch = c(rep(1, length(GSE6477_HMMid)), rep(1, length(GSE6477_NHMMid)), rep(2, length(HMMid)), rep(2, length(NHMMid))), 
 					xlab = 'adjusted tri-chro mean', ylab = 'adjusted nontri-chro mean', main = 'Adjusted Trisomy&Nontrisomy Chro Mean Distribution')
 				legend('topright', c('GSE6477 HMM', 'GSE6477 NHMM', 'UserData HMM', 'UserData NHMM'), pch = c(1,1,2,2), col = c(rgb(1, 0.5, 1), rgb(0.5, 0, 1), 'red', 'blue'))
@@ -145,44 +122,42 @@ mmsc <- function(
 			for (i in AllSampleid){
 				GSE6477_HMMid <- intersect(1:70, AllSampleid[-i])
 				GSE6477_NHMMid <- intersect(71:140, AllSampleid[-i])
-				FeatureGene <- unlist(strsplit(GSE6477DifExprGeneList[[1]][i], ','))
-				GSE6477_Adjusted_TriNontriChro_Mean_Data <- Adjusted_TriNontriChro_Mean(GSE6477ExprDataMMscale, FeatureGene)
+				FeatureGene <- unlist(strsplit(as.vector(td$dif[[1]][i]), ','))
+				GSE6477_Adjusted_TriNontriChro_Mean_Data <- Adjusted_TriNontriChro_Mean(td$exp, FeatureGene)
 				Adjusted_TriNontriChro_Mean_Data <- Adjusted_TriNontriChro_Mean(ExprData_MM_scale, FeatureGene)
 				PDF_Output <- paste(Adjusted_TriNontriChroMean_Plot_Fold, 'AdjustedMeanDistri_Plot', i, '.pdf', sep = '')
 				pdf(PDF_Output)
 				Adjustd_TriNontriChroMean_Plot(GSE6477_Adjusted_TriNontriChro_Mean_Data, GSE6477_HMMid, GSE6477_NHMMid, Adjusted_TriNontriChro_Mean_Data, UserData_HMMid, UserData_NHMMid)
 				dev.off()}
 		}
-	######################################
 	# main function
-	######################################
+		library(affy)
+		library(AnnotationDbi)
+		library(class)
 		print("========================================")
 		print(paste('Start time:', Sys.time(), sep = ''))
-		#----------STEP 1----------#
+		#step 1
 		print('Check the data ...')
-		if (Raw_Dir == "" & Exp_File == "") {
-			print('No Data. EXIT!')
-			Exp_File_Sign=F}else
-		if (Raw_Dir != "" & Exp_File == "") {
+		if (Raw_Dir == "" & Exp_File == ""){
+			print('no data. EXIT!')
+			Exp_File_Sign=F}
+		if (Raw_Dir != ""){
 			Raw_Dir=switch_path(Raw_Dir)
 			Out_Dir=switch_path(Out_Dir)
 			dir.create(Out_Dir)
 			Exp_File="Expression_Temp.XLS"
 			Exp_File=paste(Out_Dir,Exp_File,sep="")
-			print('Raw --> Exp start.')
+			print('raw data --> expression start:')
 			print('please wait about 1min~1h depend on the size of data')
 			rp(Raw_Dir,CDF_Name,Exp_File)
-			print('Raw --> Exp finished.')
-			Exp_File_Sign=T}else
-		if (Raw_Dir == "" & Exp_File != "") {
-			print("Existed exp data")
-			Exp_File_Sign=T}else
-		if (Raw_Dir != "" & Exp_File != "") {
-			print("Existed both Raw and Exp... EXIT!")
-			Exp_File_Sign=F}
-		#----------STEP 2----------#
-		Tra_Dir=switch_path(Tra_Dir)
-		if (Exp_File_Sign) cf(Exp_File,Out_Dir,K_Const,Run_Time,Tra_Dir)
+			print('raw --> expression finished.')
+			Exp_File_Sign=T}
+		if (Raw_Dir == "" & Exp_File != ""){
+			print("exist expression data")
+			Exp_File_Sign=T}
+		#step 2
+		if (Exp_File_Sign)
+			cf(Exp_File,Out_Dir,K_Const,Run_Time,Tra_Data)
 		print(paste('End time:', Sys.time(), sep = ''))
 		print("========================================")
 }

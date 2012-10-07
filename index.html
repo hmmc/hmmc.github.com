@@ -20,9 +20,7 @@
 
 <h2>Download</h2>
 
-<p>Packages: Windows <a href="data/ClassifyMM_1.0.zip">ClassifyMM_1.0.zip</a> Mac <a href="data/ClassifyMM_1.0.tar.gz">ClassifyMM_1.0.tar.gz</a></p>
-
-<p>Training data: <a href="data/TrainData.tar.bz2">TrainData.tar.bz2</a></p>
+<p>Packages: Windows [...] Mac <a href="data/ClassifyMM_1.1.tar.gz">ClassifyMM_1.1.tar.gz</a></p>
 
 <p>Test data(GSE6401, not whole): <a href="data/GSE6401_RAW.tar.bz2">GSE6401_RAW.tar.bz2</a></p>
 
@@ -58,13 +56,20 @@
 <pre><code>run R GUI --&gt; package/data --&gt; package installer --&gt; local source package.
 </code></pre>
 
+<p>About Training data</p>
+
+<p>what's training data? how to create a taining data set? you can use default data by following code in R:</p>
+
+<pre><code>data(td, package="ClassifyMM")
+</code></pre>
+
 <h3><em>Input for main function mmsc()</em></h3>
 
 <p><em>Raw_Dir</em> | <em>Exp_File</em> : Raw_Dir for raw data directory and Exp_File for expression data file name. The format of raw data is compressed .cel from GEO database by affy matrix technology. You can input raw data directly, then the program will first calculate the expression by R package <em>affy</em>. Otherwise, you must provide common style expression data. You can't provide both Raw_Dir and Exp_File.</p>
 
 <p><em>CDF_Name</em> : Refer to CDF names used by package "affy".</p>
 
-<p>[<em>Tra_Dir</em>] : A directory contain the training data. By default it's "./TrainData".</p>
+<p><em>Tra_Data</em> : A basic data.</p>
 
 <p>[<em>Out_Dir</em>] : A directory contain all of result and temp file. By default it's "./OutPut".</p>
 
@@ -87,7 +92,7 @@
 <h3><em>Example</em></h3>
 
 <pre><code>#set workshop
-setwd("~/Documents/YingxiangL/");
+setwd("~/Documents/cmmtest/");
 
 #overview the file and directory
 dir();
@@ -95,8 +100,14 @@ dir();
 #load package
 library(ClassifyMM);
 
+#load training data
+data(td,package="ClassifyMM")
+
 #analysie data
-mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Dir="TrainData/", CDF_Name="HGU133a_hs_refseq");
+mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Data=td, CDF_Name="HGU133a_hs_refseq");
+
+#overview the file and diretor  when analysis finished.
+dir()
 </code></pre>
 
 <h3><em>Screenshot</em></h3>

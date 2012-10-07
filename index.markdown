@@ -7,9 +7,7 @@ Multiple myeloma is a cancer of plasma cells that normally produces antibodies. 
 
 ## Download
 
-Packages: Windows [ClassifyMM_1.0.zip](data/ClassifyMM_1.0.zip) Mac [ClassifyMM_1.0.tar.gz](data/ClassifyMM_1.0.tar.gz)
-
-Training data: [TrainData.tar.bz2](data/TrainData.tar.bz2)
+Packages: Windows [...] Mac [ClassifyMM_1.1.tar.gz](data/ClassifyMM_1.1.tar.gz)
 
 Test data(GSE6401, not whole): [GSE6401_RAW.tar.bz2](data/GSE6401_RAW.tar.bz2)
 
@@ -41,6 +39,12 @@ Install ClassifyMM
 
 	run R GUI --> package/data --> package installer --> local source package.
 
+About Training data
+
+what's training data? how to create a taining data set? you can use default data by following code in R:
+	
+	data(td, package="ClassifyMM")
+
 	
 ### *Input for main function mmsc()*
 
@@ -48,7 +52,7 @@ Install ClassifyMM
 
 *CDF_Name* : Refer to CDF names used by package "affy".
 
-[*Tra_Dir*] : A directory contain the training data. By default it's "./TrainData".
+*Tra_Data* : A basic data.
 
 [*Out_Dir*] : A directory contain all of result and temp file. By default it's "./OutPut".
 
@@ -72,7 +76,7 @@ MMSCresult_k16.txt :
 
 
 	#set workshop
-	setwd("~/Documents/YingxiangL/");
+	setwd("~/Documents/cmmtest/");
 	
 	#overview the file and directory
 	dir();
@@ -80,9 +84,15 @@ MMSCresult_k16.txt :
 	#load package
 	library(ClassifyMM);
 	
+	#load training data
+	data(td,package="ClassifyMM")
+	
 	#analysie data
-	mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Dir="TrainData/", CDF_Name="HGU133a_hs_refseq");
+	mmsc(Raw_Dir=“GSE6401_RAW/”, Tra_Data=td, CDF_Name="HGU133a_hs_refseq");
 
+	#overview the file and diretor	when analysis finished.
+	dir()
+	
 ### *Screenshot*
 
 ![image](image/cdf1.png)
